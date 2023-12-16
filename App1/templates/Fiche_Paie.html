@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Maneken Home</title>
+    <style>
+        body {
+            background-color: rgb(157, 157, 157);
+        }
+        .navbar-brand {
+            color: rgb(49, 99, 100) !important;
+        }
+        .navbar-brand:hover {
+            color: rgb(0, 0, 0) !important;
+        }
+        .nav-link {
+            color: rgb(49, 99, 100) !important;
+        }
+        .nav-link:hover {
+            color: rgba(0, 0, 0, 0.992)!important;
+        }
+        #Table-Emp {
+            margin-top: 20px;
+        }
+        #Search_Button {
+            color: rgb(49, 99, 100) !important;
+            border-color: rgb(49, 99, 100) !important;
+        }
+        #Search_Button:hover {
+            background-color: rgb(49, 99, 100) !important;
+            color: #fff !important;
+        }
+        th {
+            color: rgb(49, 99, 100) !important;
+        }
+        th:hover {
+            color: rgb(0, 0, 0) !important;
+        }
+        .navbar-toggler:hover {
+            background-color: rgb(49, 99, 100) !important;
+        }
+        @media screen and (max-width: 1000px) {
+            #Autres_Ind_Primes{
+                margin-top: 25px;
+            }
+            #Jours_Supp{
+                margin-top: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-light" id="Nav_Menu">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'Index' %}">Maneken Manager</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{% url 'Index' %}">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://127.0.0.1:8000/admin" target="_blank">Modifier les données</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Rubriques de la paie
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'Fiche_Paie' %}">Établir une fiche de paie</a></li>
+                            <li><a class="dropdown-item" href="{% url 'Avances' %}">Prets et avance</a></li>
+                            <li><a class="dropdown-item" href="{% url 'Comptes' %}">Comptes des employés</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'Fin_De_Mois' %}">Opérations de fin du mois</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'Congés' %}">Congés</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'Etats' %}">états de Maneken</a>
+                    </li>
+                </ul>
+                <form class="d-flex" role="search" method="post" action="{% url 'Search_view' %}">
+                    {% csrf_token %}
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="Search_Name">
+                    <button class="btn btn-outline-success" type="submit" id="Search_Button">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left side: Table of 7 columns -->
+            <div class="col-md-12" id="pdfContent">
+                <center><h2>Fiche de paie</h2></center>
+                <div class="row">
+                    <div class="col-md-6 col-lg-6">
+                        <table class="table table-striped table-light">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <center>
+                                            <b>BULLETIN DE PAIE</b>
+                                        </center>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ASTARTE FOOD TUNISIE</td>
+                                </tr>
+                                <tr>
+                                    <td>Rue 8600 Z.I la Charguia</td>
+                                </tr>
+                                <tr>
+                                    <td>Affiliation CNSS: {{NUM_AFFILIATION}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6 col-lg-6">
+                        <table class="table table-striped table-light">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <center>
+                                            <b>DATES</b>
+                                        </center>
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Année: </td>
+                                    <td>{{year}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Mois: </td>
+                                    <td>{{month}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Date d'effectuation: </td>
+                                    <td>{{day}}/{{month}}/{{year}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% if Fiche %}
+                <div class="row">
+                    <div class="col-md-4">
+                        <table class="table table-striped table-light">
+                            <tbody>
+                                <tr>
+                                    <td>Matricule: </td>
+                                    <td>{{Fiche.Matricule}}</td>
+                                </tr>
+                                <tr>
+                                    <td>CIN: </td>
+                                    <td>{{Fiche.CIN}}</td>
+                                </tr>
+                                {% if Fiche.Chef_Famille == "on" %}
+                                <tr>
+                                    <td>Situation Familiale: </td>
+                                    <td>Chef de famille</td>
+                                </tr>
+                                <tr>
+                                    <td>Nombre d'enfants: </td>
+                                    <td>{{Fiche.Enfants}}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td>Nombre d'enfants: </td>
+                                    <td>{{Fiche.Enfants}}</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <table class="table table-striped table-light">
+                            <tbody>
+                                <tr>
+                                    <td>Emploi: </td>
+                                    <td>{{Fiche.Qualification}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Contrat: </td>
+                                    <td>{{Fiche.Sit_Admin}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Catégorie: </td>
+                                    <td>{{Fiche.Cat}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Echelon: </td>
+                                    <td>{{Fiche.Ech}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <table class="table table-striped table-light">
+                            <tbody>
+                                <tr>
+                                    <td>Nom Prénom: </td>
+                                    <td id ="Nom_Prénom">{{Fiche.Nom}} {{Fiche.Prénom}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Adresse: </td>
+                                    <td>{{Fiche.Adresse}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Salaire de base: </td>
+                                    <td>{{Fiche.Salaire_de_base}}</td>
+                                </tr>
+                                <tr>
+                                    <td>N° CNSS: </td>
+                                    <td>{{Fiche.N_CNSS}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+                <table class="table table-striped-columns table-light">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Libellé</th>
+                            <th>Dep de Jrs</th>
+                            <th>Nbre Jrs</th>
+                            <th>Montant</th>
+                            <th>Coefficient</th>
+                            <th>Retenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>1</th>
+                            <td>Salaire du mois</td>
+                            <td>Oui</td>
+                            <td>{{Fiche.jours_travaillés}}</td>
+                            <td>{{Fiche.Salaire_Du_Mois}}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {% if Fiche.Congé_Payé != 0 and Fiche.Congé_Payé != None%}
+                        <tr>
+                            <th>2</th>
+                            <td>Congé payé</td>
+                            <td>Oui</td>
+                            <td>{{Fiche.Congé_Payé}}</td>
+                            <td>{{Fiche.val_congé_payé}}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {% endif %}
+                        {% if Fiche.Congé_Non_Payé != 0 and Fiche.Congé_Non_Payé != None%}
+                        <tr>
+                            <th>3</th>
+                            <td>Congé non payé</td>
+                            <td>Oui</td>
+                            <td>{{Fiche.Congé_Non_Payé}}</td>
+                            <td></td>
+                            <td></td>
+                            <td>{{Fiche.val_congé_non_payé}}</td>
+                        </tr>
+                        {% endif %}
+                        {% if Fiche.Indemnité_Transport != 0 and Fiche.Indemnité_Transport != None%}
+                        <tr>
+                            <th>4</th>
+                            <td>Indemnité de transport</td>
+                            <td>Non</td>
+                            <td></td>
+                            <td>{{Fiche.Indemnité_Transport}}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {% endif %}
+                        {% if Fiche.Indemnité_Présence != 0 and Fiche.Indemnité_Présence != None%}
+                        <tr>
+                            <th>5</th>
+                            <td>Prime de Présence</td>
+                            <td>Oui</td>
+                            <td>{{Fiche.jours_travaillés}}</td>
+                            <td>{{Fiche.Val_Ind_Présence}}</td>
+                            <td>{{Fiche.Indemnité_Présence}}</td>
+                            <td></td>
+                        </tr>
+                        {% endif %}
+                        {% if Fiche.Jours_Supp != 0 and Fiche.Jours_Supp != None%}
+                        <tr>
+                            <th>6</th>
+                            <td>Jours supplémentaire</td>
+                            <td>Oui</td>
+                            <td>{{Fiche.Jours_Supp}}</td>
+                            <td>{{val_jours_supp}}</td>
+                            <td>100%</td><!--Taux jour supp-->
+                            <td></td>
+                        </tr>
+                        {% endif %}
+                        {% if Fiche.Autres_Ind_Primes != 0 and Fiche.Autres_Ind_Primes != None%}
+                        <tr>
+                            <th>7</th>
+                            <td>Autres indemnités/primes</td>
+                            <td>Non</td>
+                            <td></td>
+                            <td>{{Fiche.Autres_Ind_Primes}}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {% endif %}
+                        {% if Fiche.Indemnité_Panier != 0 and Fiche.Indemnité_Panier != None%}
+                        <tr>
+                            <th>8</th>
+                            <td>Indemnité Panier</td>
+                            <td>Non</td>
+                            <td></td>
+                            <td>{{Fiche.Indemnité_Panier}}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {% endif %}
+                        <!--Ajouter autres retenus?-->
+                        <tr>
+                            <th>9</th>
+                            <td>Salaire brut</td>
+                            <td>Oui</td>
+                            <td></td>
+                            <td>{{Fiche.SalaireBrut}}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>10</th>
+                            <td>CNSS</td>
+                            <td>Non</td>
+                            <td></td>
+                            <td></td>
+                            <td>9.18%</td>
+                            <td>{{Fiche.cnss}}</td>
+                        </tr>
+                        <tr>
+                            <th>11</th>
+                            <td>Salaire imposable</td>
+                            <td>Oui</td>
+                            <td></td>
+                            <td>{{Fiche.Imposable}}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>12</th>
+                            <td>IRPP</td>
+                            <td>Non</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>{{Fiche.irpp}}</td>
+                        </tr>
+                        <tr>
+                            <th>13</th>
+                            <td>CSS</td>
+                            <td>Non</td>
+                            <td></td>
+                            <td></td>
+                            <td>0.5%</td>
+                            <td>{{Fiche.css}}</td>
+                        </tr>
+                        <tr>
+                            <th>14</th>
+                            <td>Salaire Net</td>
+                            <td>Oui</td>
+                            <td></td>
+                            <td>{{Fiche.Salaire_Net}}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>15</th>
+                            <td>Avance</td>
+                            <td>Non</td>
+                            <td></td>
+                            <td>{{Fiche.Avance}}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>16</th>
+                            <td>Net à payer</td>
+                            <td>Oui</td>
+                            <td></td>
+                            <td>{{Fiche.Net_a_Payer}}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <center>
+                    <a class="btn btn-dark" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+                        Tutoriel
+                    </a>
+                    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Tutoriel</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <div>
+                                - Cette section de fiche de paie ne depend pas du personnel enregistré 
+                                dans la base de données pour calculer les salaires il n'est pas obligé 
+                                d'entrer les données personnels tels que le non prénom etc.. <hr>
+                                - Le logiciel calculera le salaire à partir du salaire de base par defaut
+                                mais vous pouvez calculer à partir du net à payer en activant 'Salaire Net'<hr>
+                                -En activant "Enregistrer fiche de paie" la fiche de paie sera enregistrée 
+                                dans la base de données assurez vous d'avoir remplis tout les espaces pour
+                                avoir une fiche de paie sans cases manquantes lors de l'impression <hr>
+                                -L'option exporter en xcel et imprimer ne sont siponibles qu'en cas 
+                                d'enregistrement de la fiche de paie <hr>
+                                -Les indemnités sont fixées avec un minimum de 0 et des valeurs de default = 0
+                                sauf La section Autres peut etre négative et peut donc servier de retenue 
+                                pas que de Prime <hr>
+                                -Jours supp est en jours pas en valeur et Prime de présence se calcule sur
+                                la base du nombre de jours travaillés
+                            </div>
+                        </div>
+                    </div>
+                </center>
+            </div>
+            <!-- Right side: Form with input groups -->
+            <div class="col-md-12">
+                <center><h2>Remplissez ces champs</h2></center>
+                <div class="col-md-12 col-sm-12">
+                    <form class="mb-1" role="document" method="post" action="{% url 'Fiche_Paie' %}">
+                        {% csrf_token %}
+                        <!-- Nom prenom -->
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 mb-1">
+                                <label for="Nom" class="form-label">Nom</label>
+                                <input type="text" class="form-control" id="Nom" name="Nom" maxlength="20" value="NaN">
+                            </div>
+                            <div class="col-md-3 col-sm-3 mb-1">
+                                <label for="Prénom" class="form-label">Prénom</label>
+                                <input type="text" class="form-control" id="Prénom" name="Prénom" maxlength="20" value="NaN">
+                            </div>
+                            <div class="col-md-3 col-sm-3 mb-1">
+                                <label for="Num_Affiliation" class="form-label">N° affiliation CNSS</label>
+                                <input type="text" class="form-control" id="Num_Affiliation" name="Num_Affiliation" value="{{NUM_AFFILIATION}}">
+                            </div>
+                            <div class="col-md-3 col-sm-3 mb-1">
+                                <label for="Qualification" class="form-label">Poste</label>
+                                <input type="text" class="form-control" id="Qualification" name="Qualification" maxlength="50" value="NaN">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-sm-4 mb-1">
+                                <label for="N_CNSS" class="form-label">N° CNSS employé</label>
+                                <input type="text" class="form-control" id="N_CNSS" name="N_CNSS" min="0" value="NaN">
+                            </div>
+                            <div class="col-md-4 col-sm-4 mb-1">
+                                <label for="Date" class="form-label">Date</label>
+                                <input type="datetime" class="form-control" id="Date" name="Date" value="{{day}}/{{month}}/{{year}}" required>
+                            </div>
+                            <div class="col-md-4 col-sm-4 mb-1">
+                                <label for="Sit_Admin" class="form-label">Sit admin(Contrat)</label>
+                                <input type="text" class="form-control" id="Sit_Admin" name="Sit_Admin" maxlength="20" value="NaN">
+                            </div>
+                        </div>
+                        <!---------------------------->
+                        <div class="row">
+                            <div class="col-md-4 col-sm-4 mb-1">
+                                <label for="Matricule" class="form-label">Matricule</label>
+                                <input type="text" class="form-control" id="Matricule" name="Matricule" value="NaN" required>
+                            </div>
+                            <div class="col-md-4 col-sm-4 mb-1">
+                                <label for="CIN" class="form-label">CIN</label>
+                                <input type="text" class="form-control" id="CIN" name="CIN" value="NaN" required>
+                            </div>
+                            <div class="col-md-4 col-sm-4 mb-1">
+                                <label for="Adresse" class="form-label">Adresse</label>
+                                <input type="text" class="form-control" id="Adresse" name="Adresse" value="NaN" required>
+                            </div>
+                        </div>
+                        <!---------------------------->
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 mb-1">
+                                <label for="Cat" class="form-label">Catégorie</label>
+                                <input type="number" class="form-control" id="Cat" name="Cat" max="15" min="0" value= "0" required>
+                            </div>
+                            <div class="col-md-3 col-sm-3 mb-1">
+                                <label for="Ech" class="form-label">Echelon</label>
+                                <input type="number" class="form-control" id="Ech" name="Ech" max="15" min="0" value="0" required>
+                            </div>
+                            <div class="col-md-3 col-sm-3 mb-1">
+                                <label for="Enfants" class="form-label">Nb Enfants</label>
+                                <input type="number" class="form-control" id="Enfants" name="Enfants" max="10" min="0" required value="0">
+                            </div>
+                            <div class="col-md-3 col-sm-3 mb-1 form-check" style="margin-top: 30px;">
+                                <input type="checkbox" class="form-check-input" id="Chef_Famille" name="Chef_Famille">
+                                <label class="form-check-label" for="Chef_Famille">Chef de famille</label>
+                            </div>
+                        </div>
+                        <hr>
+                        <!---------------------------->
+                        <div class="row">
+                            <div class="col-md-4 col-sm-4 mb-1">
+                                <label for="Congé_Payé" class="form-label">Congé payé</label>
+                                <input type="number" class="form-control" id="Congé_Payé" name="Congé_Payé" max="26" min="0" value="0" required>
+                            </div>
+                            <div class="col-md-4 col-sm-4 mb-1">
+                                <label for="Congé_Non_Payé" class="form-label">Congé non payé</label>
+                                <input type="number" class="form-control" id="Congé_Non_Payé" name="Congé_Non_Payé" max="26" min="0" value="0" required>
+                            </div>
+                            <div class="col-md-4 col-sm-4 mb-1 form-check">
+                                <h6>Calculer à partir du:</h6>
+                                <div class="form-check" style="margin-top: 10px;">
+                                    <input type="checkbox" class="form-check-input" id="Net" name="Net">
+                                    <label class="form-check-label" for="Net">Net</label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <!---------------------------->
+                        <center>
+                            <div class="col-md-6 col-sm-6 mb-1">
+                                <label for="SalaireBase" class="form-label">Salaire de base</label>
+                                <input type="number" step="0.001" class="form-control" id="SalaireBase" name="SalaireBase" min="0" style = "width: 50%;">
+                            </div>
+                        </center>
+                        <div class="row">
+                            <div class="col-md-2 col-sm-2 mb-1">
+                                <label for="Indemnité_Transport" class="form-label"><center>Prime de transport</center></label>
+                                <input type="number" step="0.001" class="form-control" id="Indemnité_Transport" name="Indemnité_Transport" min="0" required value="0">
+                            </div>
+                            <div class="col-md-2 col-sm-2 mb-1">
+                                <label for="Indemnité_Présence" class="form-label text-md-end"><center>Prime de Présence /j</center></label>
+                                <input type="number" step="0.001" class="form-control" id="Indemnité_Présence" name="Indemnité_Présence" value="0" min="0" required>
+                            </div>
+                            <div class="col-md-2 col-sm-2 mb-1">
+                                <label for="Jours_Supp" class="form-label text-md-end"><center>Jours Supp</center></label>
+                                <input type="number" step="1" class="form-control" id="Jours_Supp" name="Jours_Supp" value="0" min="0" max="10" required>
+                            </div>
+                            <div class="col-md-2 col-sm-2 mb-1">
+                                <label for="Indemnité_Panier" class="form-label text-md-end" ><center>Indemnité Panier</center></label>
+                                <input type="number" step="0.001" class="form-control" id="Indemnité_Panier" name="Indemnité_Panier" value="0" required>
+                            </div>
+                            <div class="col-md-2 col-sm-2 mb-1">
+                                <label for="Autres_Ind_Primes" class="form-label text-md-end"><center>Autres</center></label>
+                                <input type="number" step="0.001" class="form-control" id="Autres_Ind_Primes" name="Autres_Ind_Primes" value="0" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-sm-4 mb-1">
+                                <label for="Avance" class="form-label">Avance</label>
+                                <input type="number" step="0.001" class="form-control" id="Avance" name="Avance" value="0" required>
+                            </div>
+                            <div class="col-md-4 col-sm-4 mb-1">
+                                <label for="Net_a_Payer" class="form-label">Net à payer</label>
+                                <input type="number" step="0.001" class="form-control" id="Net_a_Payer" name="Net_a_Payer">
+                            </div>
+                            <div class="col-md-4 col-sm-4 mb-1 form-check">
+                                <div class="form-check" style="margin-top: 30px;">
+                                    <input type="checkbox" class="form-check-input" id="Save" name="Save">
+                                    <label class="form-check-label" for="Save">Enregistrer la fiche de paie</label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Submit Button -->
+                        <center style="margin-top: 20px;">
+                            <button type="submit" class="btn btn-primary">Calculer</button>
+                            <button type="reset" class="btn btn-danger">Reinitialiser</button>
+                        </center>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous">
+    </script>
+</body>
+</html>
