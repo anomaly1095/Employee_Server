@@ -2,35 +2,32 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import *
 from django.core.serializers import serialize
-from datetime import datetime
 from .models import *
 from django.template.loader import get_template 
 from xhtml2pdf import pisa
 import zipfile
 from io import BytesIO
 
+
+
 def Index(request):
-    month = datetime.now().month
-    year = datetime.now().year
     try:
         Emp_List = employé.objects.all()
     except:
         Emp_List = None
     if request.method == "POST":
         nouvelle_période = période()
-        nouvelle_période.Année = str(year)
-        nouvelle_période.Mois = str(month)
+        nouvelle_période.Année = str(YEAR)
+        nouvelle_période.Mois = str(MONTH)
         nouvelle_période.save()
-    return render(request=request, template_name="Index.html", context={'Emp_List':Emp_List, "month": month, "year": year})
+    return render(request=request, template_name="Index.html", context={'Emp_List':Emp_List, "month": MONTH, "year": YEAR})
 
 def Comptes(request):
-    month = datetime.now().month
-    year = datetime.now().year
     try:
         Emp_List = employé.objects.all()
     except:
         Emp_List = None
-    return render(request=request, template_name="Comptes.html", context={'Emp_List':Emp_List, "month": month, "year": year})
+    return render(request=request, template_name="Comptes.html", context={'Emp_List':Emp_List, "month": MONTH, "year": YEAR})
 
 def Congés(request):
     if request.method == 'POST':
@@ -59,17 +56,13 @@ def Congés(request):
             Emp_List = employé.objects.all()
         except:
             Emp_List = None
-    month = datetime.now().month
-    year = datetime.now().year
     return render(
         request=request,
         template_name="Congés.html",
-        context={'Emp_List': Emp_List, "month": month, "year": year}
+        context={'Emp_List': Emp_List, "month": MONTH, "year": YEAR}
     )
     
 def Congés_Add(request):
-    month = datetime.now().month
-    year = datetime.now().year
     if request.method == "POST":
         Id = request.POST.get('Id_Emp')
         try:
@@ -78,19 +71,17 @@ def Congés_Add(request):
 
             return render(request=request,
                   template_name="Congés_Add.html",
-                  context={'Emp': emp, "month": month, "year": year})
+                  context={'Emp': emp, "month": MONTH, "year": YEAR})
         except ObjectDoesNotExist:
             emp = None
         # Render the template with the employee details
         return render(request=request,
                     template_name="Congés_Add.html",
-                    context={'Emp': emp, "month": month, "year": year})
+                    context={'Emp': emp, "month": MONTH, "year": YEAR})
     else:
         return redirect(Congés)
     
 def Congés_Détails(request):
-    month = datetime.now().month
-    year = datetime.now().year
     if request.method == "POST":
         Id = request.POST.get('Id_Emp')
         try:
@@ -98,20 +89,18 @@ def Congés_Détails(request):
             # Perform any additional actions or validations here
             return render(request=request,
                   template_name="Congés_Détails.html",
-                  context={'Emp': emp, "month": month, "year": year})
+                  context={'Emp': emp, "month": MONTH, "year": YEAR})
         except ObjectDoesNotExist:
             # Handle the case where the employee does not exist
             emp = None
 
 def search_view(request):
-    month = datetime.now().month
-    year = datetime.now().year
     if request.method == "POST":
         search_name = request.POST.get("Search_Name")
         results = employé.objects.filter(Nom__icontains=search_name) | employé.objects.filter(Prenom__icontains=search_name) | employé.objects.filter(id__icontains=search_name)
         return render(request=request,
                       template_name="Search.html",
-                      context={"month": month, "year": year, "results": results})
+                      context={"month": MONTH, "year": YEAR, "results": results})
     else:
         return redirect(to=Index)
    #________________________________________________
@@ -227,7 +216,7 @@ def IRPP_CSS_Net_Find(Imposable_Annuel: float, Chef_Famille: str, Enfants: int, 
     Fiche.Salaire_Net = Fiche.Imposable-Fiche.irpp-Fiche.css
     return Fiche
 
-def get_request_primary_content(request) -> fiche_paie: #obtenir les donnes primaires (nom, prenom, cin...)
+def get_request_primary_content(request) -> fiche_paie: #obtenir les donnes primaires nom, prenom, cin...
     Fiche = fiche_paie()
     Fiche.Nom =request.POST.get("Nom", None)
     Fiche.Prénom =request.POST.get("Prénom", None)
@@ -320,9 +309,9 @@ def Fiche_Paie(request):
                 context={
                     "Fiche": Fiche,
                     "NUM_AFFILIATION": NUM_AFFILIATION,
-                    "year": datetime.now().year,
-                    "month": datetime.now().month,
-                    "day": datetime.now().day,
+                    "year": YEAR,
+                    "month": MONTH,
+                    "day": DAY,
                 },
             )
         else:
@@ -362,9 +351,9 @@ def Fiche_Paie(request):
                 context={
                     "Fiche": Fiche,
                     "NUM_AFFILIATION":  NUM_AFFILIATION,
-                    "year": datetime.now().year,
-                    "month": datetime.now().month,
-                    "day": datetime.now().day,
+                    "year": YEAR,
+                    "month": MONTH,
+                    "day": DAY,
                 },
             )
     return render(
@@ -388,7 +377,7 @@ def Avances(request):
     
 def Etats(request):
     fiche_list = fiche_paie.objects.all()
-    serialized_data = serialize('json', fiche_list)
+    serialized_data = serialize('json', fiche_list)#remember to remove période and fiche paie from admin page editable
     
     return render(request=request,
                   template_name="Etats_Maneken.html",
@@ -401,7 +390,7 @@ def New_Fiche(emp:employé) -> fiche_paie:
     fiche.Num_Affiliation = NUM_AFFILIATION
     fiche.Qualification = emp.Id_Affectation.Id_Poste.Designation
     fiche.N_CNSS = emp.Id_CNSS.Numero
-    fiche.Date = f"{datetime.now().day}/{datetime.now().month}/{datetime.now().year}"
+    fiche.Date = f"{DAY}/{MONTH}/{YEAR}"
     fiche.Matricule = emp.Matricule
     fiche.CIN = emp.CIN
     try:
@@ -432,11 +421,7 @@ def New_Fiche(emp:employé) -> fiche_paie:
     emp.save()
     return fiche
 
-
 def Fin_De_Mois(request):
-    day = datetime.now().day
-    month = datetime.now().month
-    year = datetime.now().year
     Fiche_List = list()
     Emp_List = employé.objects.all() 
     if request.method == 'POST':
@@ -488,10 +473,10 @@ def Fin_De_Mois(request):
         zip_buffer = BytesIO()  # Create a buffer to hold the ZIP file
         with zipfile.ZipFile(zip_buffer, 'a') as zip_file:
             for Fiche in Fiche_List:
-                context = {"Fiche": Fiche, "year": year, "month": month, "day": day}
+                context = {"Fiche": Fiche, "year": YEAR, "month": MONTH, "day": DAY}
                 html = template.render(context=context)
                 response = HttpResponse(content_type='application/pdf')
-                name = Fiche.Nom + ' ' + Fiche.Prénom + '_' + str(day) + '_' + str(month) + '_' + str(year) + ".pdf"
+                name = Fiche.Nom + ' ' + Fiche.Prénom + '_' + str(DAY) + '_' + str(MONTH) + '_' + str(YEAR) + ".pdf"
                 response['Content-Disposition'] = 'attachment; filename=' + name
                 pisa_status = pisa.CreatePDF(html, dest=response)
                 if pisa_status.err:
@@ -511,7 +496,7 @@ def Fin_De_Mois(request):
     return render(request=request,
                   template_name="Fin_De_Mois.html",
                   context={"Emp_List": Emp_List,
-                           "year": year,
-                           "month": month,
-                           "day": day,
+                           "year": YEAR,
+                           "month": MONTH,
+                           "day": DAY,
                            })

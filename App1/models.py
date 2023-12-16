@@ -1,7 +1,11 @@
 from django.db import models
 from django.utils import timezone
+from datetime import datetime
 
 NUM_AFFILIATION = "48552668-52"
+YEAR = datetime.now().year
+MONTH = datetime.now().month
+DAY = datetime.now().day
 
 class contrat(models.Model):
     TYPES_CONTRATS = (
