@@ -16,6 +16,11 @@ def Index(request):
         Emp_List = employé.objects.all()
     except:
         Emp_List = None
+    if request.method == "POST":
+        nouvelle_période = période()
+        nouvelle_période.Année = str(year)
+        nouvelle_période.Mois = str(month)
+        nouvelle_période.save()
     return render(request=request, template_name="Index.html", context={'Emp_List':Emp_List, "month": month, "year": year})
 
 def Comptes(request):

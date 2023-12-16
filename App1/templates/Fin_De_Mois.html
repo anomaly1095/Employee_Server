@@ -148,7 +148,12 @@
                             </p>
                             <form action="{% url 'Fin_De_Mois' %}" method="post">
                                 {% csrf_token %}
-                                <button type="submit" id="reloadButton" class="btn btn-danger">Tout établir</button>
+                                <button type="submit" id="reloadButton" class="btn btn-success">Tout établir</button>
+                            </form>
+                            <br>
+                            <form action="{% url 'Index' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Cloturer la période</button>
                             </form>
                         </center>
                     </div>

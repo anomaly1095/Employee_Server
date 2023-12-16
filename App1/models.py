@@ -41,7 +41,7 @@ def default_local():
 
 class poste(models.Model):
     Designation = models.CharField(max_length=100, null=False, default="Vendeur")
-    Description = models.CharField(max_length=1000, null=True)
+    Description = models.TextField(null=True)
     
     def __str__(self):
         return self.Designation
@@ -126,7 +126,7 @@ class fiche_paie(models.Model):
     Prénom = models.CharField(max_length=20, null=True)
     Num_Affiliation = models.CharField(max_length=30, null=True)
     Qualification = models.CharField(max_length=50, null=True)
-    N_CNSS = models.TextField(null=True)
+    N_CNSS = models.CharField(max_length=15,null=True)
     Date = models.CharField(null=True, max_length=30)
     Matricule = models.CharField(max_length=30, null=True)
     CIN = models.CharField(max_length=15, null=True)
@@ -184,3 +184,8 @@ class employé(models.Model):
     
     def __str__(self):
         return "{0} {1}".format(self.Prenom, self.Nom)
+
+class période(models.Model):
+    Année = models.CharField(max_length=4, null=False, default= str(timezone.now().year))
+    Mois = models.CharField(max_length=25, null=False, default=str(timezone.now().month))
+    Fiche = models.ManyToManyField(to=fiche_paie, editable=True)
