@@ -188,8 +188,3 @@ class employé(models.Model):
     
     def __str__(self):
         return "{0} {1}".format(self.Prenom, self.Nom)
-
-class période(models.Model):
-    Année = models.CharField(max_length=4, null=False, default= str(timezone.now().year))
-    Mois = models.CharField(max_length=25, null=False, default=str(timezone.now().month))
-    Fiche = models.ManyToManyField(to=fiche_paie, editable=True)
