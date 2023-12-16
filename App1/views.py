@@ -361,9 +361,9 @@ def Fiche_Paie(request):
         template_name="Fiche_Paie.html",
         context={
             "NUM_AFFILIATION": NUM_AFFILIATION,
-            "year": datetime.now().year,
-            "month": datetime.now().month,
-            "day": datetime.now().day
+            "year": YEAR,
+            "month": MONTH,
+            "day": DAY
         },
     )
 
