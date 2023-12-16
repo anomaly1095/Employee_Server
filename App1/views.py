@@ -389,7 +389,7 @@ def Avances(request):
 def Etats(request):
     fiche_list = fiche_paie.objects.all()
     serialized_data = serialize('json', fiche_list)
-
+    
     return render(request=request,
                   template_name="Etats_Maneken.html",
                   context={"Fiche_List": serialized_data, "fiche_list": fiche_list})
