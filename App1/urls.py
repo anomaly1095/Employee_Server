@@ -11,4 +11,5 @@ urlpatterns = [
     path(route="Avances/", view=Avances, name='Avances'),
     path(route="Etats/", view=Etats, name='Etats'),
     path(route="Fin_De_Mois/", view=Fin_De_Mois, name='Fin_De_Mois'),
+    path(route="Login/", view=login_view, name='login'),
 ]

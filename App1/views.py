@@ -8,21 +8,39 @@ from xhtml2pdf import pisa
 import zipfile
 from io import BytesIO
 
-
+login_test = False
 
 def Index(request):
+    if not request.session.get('login_test', False):
+        return redirect('login')
     try:
         Emp_List = employé.objects.all()
     except:
         Emp_List = None
-    if request.method == "POST":
-        nouvelle_période = période()
-        nouvelle_période.Année = str(YEAR)
-        nouvelle_période.Mois = str(MONTH)
-        nouvelle_période.save()
+
     return render(request=request, template_name="Index.html", context={'Emp_List':Emp_List, "month": MONTH, "year": YEAR})
 
+def login_view(request):
+    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user_exists = CustomUser.objects.filter(username=username, password=password).exists()
+
+        if user_exists:
+            request.session['login_test'] = True
+            return redirect('Index')  # Redirect to your index view
+        else:
+            error_message = "Username ou Mot de passe invalides"
+            request.session['login_test'] = False
+            return render(request, 'Login.html', {'error_message': error_message})
+
+    return render(request, 'Login.html')
+
 def Comptes(request):
+    if not request.session.get('login_test', False):
+        return redirect('login')
     try:
         Emp_List = employé.objects.all()
     except:
@@ -30,6 +48,8 @@ def Comptes(request):
     return render(request=request, template_name="Comptes.html", context={'Emp_List':Emp_List, "month": MONTH, "year": YEAR})
 
 def Congés(request):
+    if not request.session.get('login_test', False):
+        return redirect('login')
     if request.method == 'POST':
         # Accessing the submitted values
         employee_id = request.POST['employee_id']   
@@ -63,6 +83,8 @@ def Congés(request):
     )
     
 def Congés_Add(request):
+    if not request.session.get('login_test', False):
+        return redirect('login')
     if request.method == "POST":
         Id = request.POST.get('Id_Emp')
         try:
@@ -82,6 +104,8 @@ def Congés_Add(request):
         return redirect(Congés)
     
 def Congés_Détails(request):
+    if not request.session.get('login_test', False):
+        return redirect('login')
     if request.method == "POST":
         Id = request.POST.get('Id_Emp')
         try:
@@ -95,6 +119,8 @@ def Congés_Détails(request):
             emp = None
 
 def search_view(request):
+    if not request.session.get('login_test', False):
+        return redirect('login')
     if request.method == "POST":
         search_name = request.POST.get("Search_Name")
         results = employé.objects.filter(Nom__icontains=search_name) | employé.objects.filter(Prenom__icontains=search_name) | employé.objects.filter(id__icontains=search_name)
@@ -265,7 +291,9 @@ def Round_Values(Fiche: fiche_paie):
     Fiche.Salaire_de_base = round(Fiche.Salaire_de_base, 4)
     return Fiche
 
-def Fiche_Paie(request):  
+def Fiche_Paie(request):
+    if not request.session.get('login_test', False):
+        return redirect('login')
     if request.method == "POST":
         Fiche = get_request_primary_content(request) #obtenir les données primaires de la fiche de paie
         template_path = "Fiche_Template.html"
@@ -368,6 +396,8 @@ def Fiche_Paie(request):
     )
 
 def Avances(request):
+    if not request.session.get('login_test', False):
+        return redirect('login')
     emp_list = employé.objects.all()
     serialized_data = serialize('json', emp_list)
 
@@ -376,6 +406,8 @@ def Avances(request):
                   context={"Emp_List": serialized_data})
     
 def Etats(request):
+    if not request.session.get('login_test', False):
+        return redirect('login')
     fiche_list = fiche_paie.objects.all()
     serialized_data = serialize('json', fiche_list)#remember to remove période and fiche paie from admin page editable
     
@@ -422,6 +454,8 @@ def New_Fiche(emp:employé) -> fiche_paie:
     return fiche
 
 def Fin_De_Mois(request):
+    if not request.session.get('login_test', False):
+        return redirect('login')
     Fiche_List = list()
     Emp_List = employé.objects.all() 
     if request.method == 'POST':
