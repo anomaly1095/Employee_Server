@@ -1,0 +1,303 @@
+<div class="col-md-12" id="pdfContent">
+    <center><h2>Fiche de paie</h2></center>
+    <div class="row">
+        <div class="col-md-6 col-lg-6">
+            <table class="table table-striped table-light">
+                <thead>
+                    <tr>
+                        <th>
+                                <b>BULLETIN DE PAIE</b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ASTARTE FOOD TUNISIE</td>
+                    </tr>
+                    <tr>
+                        <td>Rue 8600 Z.I la Charguia</td>
+                    </tr>
+                    <tr>
+                        <td>Affiliation CNSS: {{Fiche.Num_Affiliation}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr>
+        <br>
+        <div class="col-md-6 col-lg-6">
+            <table class="table table-striped table-light">
+                <tbody>
+                    <tr>
+                        <td>Année: </td>
+                        <td>{{year}}</td>
+                    </tr>
+                    <tr>
+                        <td>Mois: </td>
+                        <td>{{month}}</td>
+                    </tr>
+                    <tr>
+                        <td>Date d'effectuation: </td>
+                        <td>{{day}}/{{month}}/{{year}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr>
+    {% if Fiche %}
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table table-striped table-light">
+                <tbody>
+                    <tr>
+                        <td>Matricule: </td>
+                        <td>{{Fiche.Matricule}}</td>
+                    </tr>
+                    <tr>
+                        <td>CIN: </td>
+                        <td>{{Fiche.CIN}}</td>
+                    </tr>
+                    {% if Fiche.Chef_Famille == "on" %}
+                    <tr>
+                        <td>Situation Familiale: </td>
+                        <td>Chef de famille</td>
+                    </tr>
+                    <tr>
+                        <td>Nombre d'enfants: </td>
+                        <td>{{Fiche.Enfants}}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td>Nombre d'enfants: </td>
+                        <td>{{Fiche.Enfants}}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td>N° CNSS: </td>
+                        <td>{{Fiche.N_CNSS}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <table class="table table-striped table-light">
+                <tbody>
+                    <tr>
+                        <td>Emploi: </td>
+                        <td>{{Fiche.Qualification}}</td>
+                    </tr>
+                    <tr>
+                        <td>Contrat: </td>
+                        <td>{{Fiche.Sit_Admin}}</td>
+                    </tr>
+                    <tr>
+                        <td>Catégorie: </td>
+                        <td>{{Fiche.Cat}}</td>
+                    </tr>
+                    <tr>
+                        <td>Echelon: </td>
+                        <td>{{Fiche.Ech}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <table class="table table-striped table-light">
+                <tbody>
+                    <tr>
+                        <td>Nom Prénom: </td>
+                        <td>{{Fiche.Nom}} {{Fiche.Prénom}}</td>
+                    </tr>
+                    <tr>
+                        <td>Adresse: </td>
+                        <td>{{Fiche.Adresse}}</td>
+                    </tr>
+                    <tr>
+                        <td>Salaire de base: </td>
+                        <td >{{Fiche.Salaire_de_base}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+    <br>
+    <hr>
+    <br>
+    <table class="table table-striped-columns table-light">
+        <thead> 
+            <tr>
+                <th>ID</th>
+                <th>Libellé</th>
+                <th>Dep de Jrs</th>
+                <th>Nbre Jrs</th>
+                <th>Montant</th>
+                <th>Coefficient</th>
+                <th>Retenue</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>1</th>
+                <td><center>Salaire du mois</center></td>
+                <td><center>Oui</center></td>
+                <td><center>{{Fiche.jours_travaillés}}</center></td>
+                <td><center>{{Fiche.Salaire_Du_Mois}}</center></td>
+                <td></td>
+                <td></td>
+            </tr>
+            {% if Fiche.Congé_Payé != 0 and Fiche.Congé_Payé != None%}
+            <tr>
+                <th>2</th>
+                <td><center>Congé payé</center></td>
+                <td><center>Oui</center></td>
+                <td>{{Fiche.Congé_Payé}}</td>
+                <td><center>{{Fiche.val_congé_payé}}</center></td>
+                <td></td>
+                <td></td>
+            </tr>
+            {% endif %}
+            {% if Fiche.Congé_Non_Payé != 0 and Fiche.Congé_Non_Payé != None%}
+            <tr>
+                <th>3</th>
+                <td><center>Congé non payé</center></td>
+                <td><center>Oui</center></td>
+                <td><center>{{Fiche.Congé_Non_Payé}}</center></td>
+                <td></td>
+                <td></td>
+                <td><center>{{Fiche.val_congé_non_payé}}</center></td>
+            </tr>
+            {% endif %}
+            {% if Fiche.Indemnité_Transport != 0 and Fiche.Indemnité_Transport != None%}
+            <tr>
+                <th>4</th>
+                <td><center>Indemnité de transport</center></td>
+                <td><center>Non</center></td>
+                <td></td>
+                <td><center>{{Fiche.Indemnité_Transport}}</center></td>
+                <td></td>
+                <td></td>
+            </tr>
+            {% endif %}
+            {% if Fiche.Indemnité_Présence != 0 and Fiche.Indemnité_Présence != None%}
+            <tr>
+                <th>5</th>
+                <td><center>Prime de Présence</center></td>
+                <td><center>Oui</center></td>
+                <td><center>{{Fiche.jours_travaillés}}</center></td>
+                <td><center>{{Fiche.Val_Ind_Présence}}</center></td>
+                <td><center>{{Fiche.Indemnité_Présence}}</center></td>
+                <td></td>
+            </tr>
+            {% endif %}
+            {% if Fiche.Jours_Supp != 0 and Fiche.Jours_Supp != None%}
+            <tr>
+                <th>6</th>
+                <td><center>Jours supplémentaire</center></td>
+                <td><center>Oui</center></td>
+                <td><center>{{Fiche.Jours_Supp}}</center></td>
+                <td><center>{{Fiche.val_jours_supp}}</center></td>
+                <td><center>100%</center></td><!--Taux jour supp-->
+                <td></td>
+            </tr>
+            {% endif %}
+            {% if Fiche.Autres_Ind_Primes != 0 and Fiche.Autres_Ind_Primes != None%}
+            <tr>
+                <th>7</th>
+                <td><center>Autres indemnités/primes</center></td>
+                <td><center>Non</center></td>
+                <td></td>
+                <td><center>{{Fiche.Autres_Ind_Primes}}</center></td>
+                <td></td>
+                <td></td>
+            </tr>
+            {% endif %}
+            {% if Fiche.Indemnité_Panier != 0 and Fiche.Indemnité_Panier != None%}
+            <tr>
+                <th>8</th>
+                <td><center>Indemnité Panier</center></td>
+                <td><center>Non</center></td>
+                <td></td>
+                <td><center>{{Fiche.Indemnité_Panier}}</center></td>
+                <td></td>
+                <td></td>
+            </tr>
+            {% endif %}
+            <!--Ajouter autres retenus?-->
+            <tr>
+                <th>9</th>
+                <td><center>Salaire brut</center></td>
+                <td><center>Oui</center></td>
+                <td></td>
+                <td><center>{{Fiche.SalaireBrut}}</center></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>10</th>
+                <td><center>CNSS</center></td>
+                <td><center>Non</center></td>
+                <td></td>
+                <td></td>
+                <td><center>9.18%</center></td>
+                <td><center>{{Fiche.cnss}}</center></td>
+            </tr>
+            <tr>
+                <th>11</th>
+                <td><center>Salaire imposable</center></td>
+                <td><center>Oui</center></td>
+                <td></td>
+                <td><center>{{Fiche.Imposable}}</center></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>12</th>
+                <td><center>IRPP</center></td>
+                <td><center>Non</center></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><center>{{Fiche.irpp}}</center></td>
+            </tr>
+            <tr>
+                <th>13</th>
+                <td><center>CSS</center></td>
+                <td><center>Non</center></td>
+                <td></td>
+                <td></td>
+                <td><center>0.5%</center></td>
+                <td><center>{{Fiche.css}}</center></td>
+            </tr>
+            <tr>
+                <th>14</th>
+                <td><center>Salaire Net</center></td>
+                <td><center>Oui</center></td>
+                <td></td>
+                <td><center>{{Fiche.Salaire_Net}}</center></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>15</th>
+                <td><center>Avance</center></td>
+                <td><center>Non</center></td>
+                <td></td>
+                <td><center>{{Fiche.Avance}}</center></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>16</th>
+                <td><center>Net à payer</center></td>
+                <td><center>Oui</center></td>
+                <td></td>
+                <td><center>{{Fiche.Net_a_Payer}}</center></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Ajout de congés à {{Emp.Nom}} {{Emp.Prénom}}</title>
+</head>
+<style>
+    body{
+        background-color: rgb(208, 203, 196);
+        margin-left: 15%;
+        margin-right: 15%;
+        margin-top: 5%;
+    }
+    button{
+        background-color: #323539;
+        color: #fff;
+        border-radius: 5px;
+        border-width: 1px;
+        margin: 5px;
+        padding: 5px;
+    }
+    button:hover{
+        background-color: rgb(49, 99, 100) !important;
+        color: #fff !important;
+    }
+    .col{
+        border-width: 2mm;
+    }
+    #Save-Button{
+        background-color: #323539;
+        color: #fff;
+        border-radius: 7px;
+        border-width: 1px;
+        margin-top: 20px;
+        padding: 10px;
+    }
+    #Save-Button:hover{
+        background-color: rgb(49, 99, 100) !important;
+        color: #fff !important;
+    }
+</style>
+<body>
+    <div class="container">
+        <center>
+            <table class="table table-striped table-hover table-dark" id="Table-Emp">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Maladie {{year}}</th>
+                        <th scope="col">Annuel {{year}}</th>
+                        <th scope="col">Non payé {{year}}</th>
+                        <th scope="col">Maladie {{month}}/{{year}}</th>
+                        <th scope="col">Annuel {{month}}/{{year}}</th>
+                        <th scope="col">Non payé {{month}}/{{year}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">{{Emp.id}}</th>
+                        <td id="Prenom">{{Emp.Prenom}}</td>
+                        <td id="Nom">{{Emp.Nom}}</td>
+                        <td id="Maladie_Année">{{Emp.Id_Congé.Congé_Maladie}}</td>
+                        <td id="Annuel_Année">{{Emp.Id_Congé.Congé_Annuel}}</td>
+                        <td id="Non_Payé_Année">{{Emp.Id_Congé.Congé_Non_Payé}}</td>
+                        <td id="Maladie_Mois">{{Emp.Id_Congé.Congé_Maladie_Ce_Mois}}</td>
+                        <td id="Annuel_Mois">{{Emp.Id_Congé.Congé_Annuel_Ce_Mois}}</td>
+                        <td id="Non_Payé_Mois">{{Emp.Id_Congé.Congé_Non_Payé_Ce_Mois}}</td>
+                    </tr> 
+                </tbody>
+            </table>
+        </center>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div>
+                    <h3>Congé maladie</h3>
+                    <h3 id="counter-Maladie">0</h3>
+                    <button onclick="incrementMaladie()">+</button>
+                    <button onclick="decrementMaladie()">-</button>
+                    <button onclick="resetMaladie()">annuler</button>
+                    <button onclick="AppliquerMaladie()">Appliquer</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div>
+                    <h3>Congé annuel</h3>
+                    <h3 id="counter-Annuel">0</h3>
+                    <button onclick="incrementAnnuel()">+</button>
+                    <button onclick="decrementAnnuel()">-</button>
+                    <button onclick="resetAnnuel()">annuler</button>
+                    <button onclick="AppliquerAnnuel()">Appliquer</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div>
+                    <h3>Absence Non Payée</h3>
+                    <h3 id="counter-NonPayé">0</h3>
+                    <button onclick="incrementNonPayé()">+</button>
+                    <button onclick="decrementNonPayé()">-</button>
+                    <button onclick="resetNonPayé()">annuler</button>
+                    <button onclick="AppliquerNonPayé()">Appliquer</button>
+                </div>
+            </div>
+        </div>
+
+        <form method="post" action="{% url 'Congés' %}" onsubmit="prepareFormData()">
+            {% csrf_token %}
+            <!-- Other input fields -->
+            <input type="hidden" name="employee_id" value="{{ Emp.id }}">
+            <input type="hidden" id="maladie_annee_input" name="maladie_annee" value="{{ Emp.Id_Congé.Congé_Maladie }}">
+            <input type="hidden" id="annuel_annee_input" name="annuel_annee" value="{{ Emp.Id_Congé.Congé_Annuel }}">
+            <input type="hidden" id="non_paye_annee_input" name="non_paye_annee" value="{{ Emp.Id_Congé.Congé_Non_Payé }}">
+            <input type="hidden" id="maladie_mois_input" name="maladie_mois" value="{{ Emp.Id_Congé.Congé_Maladie_Ce_Mois }}">
+            <input type="hidden" id="annuel_mois_input" name="annuel_mois" value="{{ Emp.Id_Congé.Congé_Annuel_Ce_Mois }}">
+            <input type="hidden" id="non_paye_mois_input" name="non_paye_mois" value="{{ Emp.Id_Congé.Congé_Non_Payé_Ce_Mois }}">
+            <center><input type="submit" value="Save" id="Save-Button"></center>
+        </form>
+    </div>
+
+    <script>
+        //---------------------------------------------
+        var counterMaladie = 0;
+        function decrementMaladie() {
+            if (counterMaladie == 0){
+                return
+            }
+            updateMaladie(--counterMaladie);
+        }
+        function incrementMaladie() {
+            updateMaladie(++counterMaladie);
+        }
+        function resetMaladie() {
+            counterMaladie = 0;
+            updateMaladie(counterMaladie);
+        }
+        function updateMaladie(val) {
+            document.getElementById('counter-Maladie').innerHTML = val;
+        }
+        function AppliquerMaladie(){
+            if (Number(document.getElementById("Maladie_Année").innerHTML) - counterMaladie < 0){//checking that values dont become negative
+                document.getElementById("Maladie_Mois").innerHTML = Number(document.getElementById("Maladie_Mois").innerHTML) + Number(document.getElementById("Maladie_Année").innerHTML)
+                document.getElementById("Maladie_Année").innerHTML = 0
+            }else{
+                document.getElementById("Maladie_Année").innerHTML = (Number(document.getElementById("Maladie_Année").innerHTML) - counterMaladie)
+                document.getElementById("Maladie_Mois").innerHTML = (Number(document.getElementById("Maladie_Mois").innerHTML) + counterMaladie)
+            }
+            resetMaladie()
+        }
+        //---------------------------------------------
+        var counterAnnuel = 0;
+        function decrementAnnuel() {
+            if (counterAnnuel == 0){
+                return
+            }
+            updateAnnuel(--counterAnnuel);
+        }
+        function incrementAnnuel() {
+            updateAnnuel(++counterAnnuel);
+        }
+        function resetAnnuel() {
+            counterAnnuel = 0;
+            updateAnnuel(counterAnnuel);
+        }
+        function updateAnnuel(val) {
+            document.getElementById('counter-Annuel').innerHTML = val;
+        }
+        function AppliquerAnnuel(){
+            if (Number(document.getElementById("Annuel_Année").innerHTML) - counterAnnuel < 0){//checking that values dont become negative
+                document.getElementById("Annuel_Mois").innerHTML = Number(document.getElementById("Annuel_Mois").innerHTML) + Number(document.getElementById("Annuel_Année").innerHTML)
+                document.getElementById("Annuel_Année").innerHTML = 0
+            }else{
+                document.getElementById("Annuel_Année").innerHTML = (Number(document.getElementById("Annuel_Année").innerHTML) - counterAnnuel)
+                document.getElementById("Annuel_Mois").innerHTML = (Number(document.getElementById("Annuel_Mois").innerHTML) + counterAnnuel)
+            }
+            resetAnnuel()
+        }
+        //---------------------------------------------
+        var counterNonPayé = 0;
+        function decrementNonPayé() {
+            if (counterNonPayé == 0){
+                return
+            }
+            updateNonPayé(--counterNonPayé);
+        }
+        function incrementNonPayé() {
+            updateNonPayé(++counterNonPayé);
+        }
+        function resetNonPayé() {
+            counterNonPayé = 0;
+            updateNonPayé(counterNonPayé);
+        }
+        function updateNonPayé(val) {
+            document.getElementById('counter-NonPayé').innerHTML = val;
+        }
+        function AppliquerNonPayé(){
+            document.getElementById("Non_Payé_Année").innerHTML  = Number(document.getElementById("Non_Payé_Année").innerHTML) + counterNonPayé;
+            document.getElementById("Non_Payé_Mois").innerHTML  = Number(document.getElementById("Non_Payé_Mois").innerHTML) + counterNonPayé;
+            resetNonPayé()
+        }
+    </script>
+    <script>
+        function prepareFormData() {
+            // Update hidden input fields with the JavaScript-modified values
+            document.getElementById('maladie_annee_input').value = document.getElementById('Maladie_Année').innerHTML;
+            document.getElementById('annuel_annee_input').value = document.getElementById('Annuel_Année').innerHTML;
+            document.getElementById('non_paye_annee_input').value = document.getElementById('Non_Payé_Année').innerHTML;
+            document.getElementById('maladie_mois_input').value = document.getElementById('Maladie_Mois').innerHTML;
+            document.getElementById('annuel_mois_input').value = document.getElementById('Annuel_Mois').innerHTML;
+            document.getElementById('non_paye_mois_input').value = document.getElementById('Non_Payé_Mois').innerHTML;
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous">
+    </script>
+</body>
+</html>

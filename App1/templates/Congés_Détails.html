@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Détails de congés de {{Emp.Nom}} {{Emp.Prénom}}</title>
+</head>
+<style>
+    body{
+        background-color: rgb(208, 203, 196);
+        margin-left: 15%;
+        margin-right: 15%;
+        margin-top: 5%;
+    }
+    button{
+        background-color: #323539;
+        color: #fff;
+        border-radius: 5px;
+        border-width: 1px;
+    }
+    button:hover{
+        background-color: rgb(49, 99, 100) !important;
+        color: #fff !important;
+    }
+    .col{
+        border-width: 2mm;
+    }
+</style>
+<body>
+    <center>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-dark" id="Table-Emp">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Maladie {{year}}</th>
+                        <th scope="col">Annuel {{year}}</th>
+                        <th scope="col">Non payé {{year}}</th>
+                        <th scope="col">Maladie {{month}}/{{year}}</th>
+                        <th scope="col">Annuel {{month}}/{{year}}</th>
+                        <th scope="col">Non payé {{month}}/{{year}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">{{Emp.id}}</th>
+                        <td id="Prenom">{{Emp.Prenom}}</td>
+                        <td id="Nom">{{Emp.Nom}}</td>
+                        <td id="Maladie_Année">{{Emp.Id_Congé.Congé_Maladie}}</td>
+                        <td id="Annuel_Année">{{Emp.Id_Congé.Congé_Annuel}}</td>
+                        <td id="Non_Payé_Année">{{Emp.Id_Congé.Congé_Non_Payé}}</td>
+                        <td id="Maladie_Mois">{{Emp.Id_Congé.Congé_Maladie_Ce_Mois}}</td>
+                        <td id="Annuel_Mois">{{Emp.Id_Congé.Congé_Annuel_Ce_Mois}}</td>
+                        <td id="Non_Payé_Mois">{{Emp.Id_Congé.Congé_Non_Payé_Ce_Mois}}</td>
+                    </tr> 
+                </tbody>
+            </table>
+        </div>
+        <canvas id="leaveChart" width="400" height="200"></canvas>
+    </center>
+    <script>
+        var ctx = document.getElementById('leaveChart').getContext('2d');
+        var data = {
+            labels: ["Annual Leave", "Sick Leave", "Unpaid Leave"],
+            datasets: [{
+                label: 'Leave Statistics',
+                data: [
+                    {{ Emp.Id_Congé.Congé_Annuel_Ce_Mois }},
+                    {{ Emp.Id_Congé.Congé_Maladie_Ce_Mois }},
+                    {{ Emp.Id_Congé.Congé_Non_Payé_Ce_Mois }}
+                ],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        var options = {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        };
+
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: options
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous">
+    </script>
+</body>
+</html>
